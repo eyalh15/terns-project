@@ -82,8 +82,9 @@ class VideoConverter:
     def _skip_seconds(self, video, seconds_number):
         print(f'Skipping {seconds_number} seconds..')
         frames_num = self._seconds_to_frames(video, seconds_number) # Get frames number in the seconds ammount
-        counter = 0
         success = True
+        counter = 0
+        print(seconds_number, frames_num)
         while success and counter < frames_num:
             success,_ = video.read()
             counter = counter + 1
@@ -182,8 +183,12 @@ class VideoConverter:
                         # Camera start moving
                         is_tour_found = True
                         continue
-
+        
+        ret, curr_frame = video.read()
+        cv2.imwrite('before_skip1.png', curr_frame)
         self._skip_seconds(video, 3)
+        ret, curr_frame = video.read()
+        cv2.imwrite('after_skip1.png', curr_frame)
         
 
     def _extract_frames(self, video_path, video_scan_times, tour_length, flag_length, output_path):
@@ -260,6 +265,7 @@ class VideoConverter:
 
             if tour_num > 0:
                 self._skip_seconds(video, magin_between_tours - 5)
+
             # Skip to the frame when tour starts
             self._skip_into_tour(video)
 

@@ -2,6 +2,8 @@ import os
 import re
 import json
 import glob
+import argparse
+
 from pathlib import Path
 from datetime import datetime
 
@@ -61,36 +63,33 @@ def get_tour_details(video_path, tours_details):
 
 
 if __name__=='__main__':
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('-r', '--video_name', help='The name of a video')
+    # Read the directory path where videos located
+    video_name = parser.parse_args().video_name
+
     # Read the JSON configuration file
     with open('tours_details.json', 'r', encoding='utf-8') as config_file:
         tour_configuration = json.load(config_file)
     
-    videos_dir = tour_configuration["videos_dir"]
+    videos_dir = Path(tour_configuration["videos_dir"])
 
-
-    directory_path = Path(videos_dir)
-
-
-    if not directory_path.exists() or not directory_path.is_dir():
-        print(f'{directory_path} - Movies directory path does not exist.')
+    if not videos_dir.exists() or not videos_dir.is_dir():
+        print(f'{videos_dir} - Movies directory path does not exist.')
         exit()
-
-    video_paths = []
-    for extension in tour_configuration["video_extensions"]:
-        video_paths.extend(glob.glob(os.path.join(directory_path, '**', extension)))
-
+    
+    video_path = str(videos_dir / video_name)
+    print(type(video_path))
+    print(video_path)
+    
     video_converter = VideoConverter()
-
-    video_paths = [path for path in video_paths if 'atlitcam191.stream_2023_07_22_05_30_00' in path]
-    print(video_paths)
-
-
-
-    for index, video_path in enumerate(video_paths):
-        (video_scan_times, flags_ids, tour_length, margin_till_1st_tour, magin_between_tours) = get_tour_details(\
-            video_path, tour_configuration['tours_details'])
-        if video_scan_times == None or flags_ids == None or tour_length == None:
-            continue
-        video_converter.convert_video(video_path, video_scan_times, flags_ids, tour_length, magin_between_tours, \
-                                      margin_till_1st_tour, tour_configuration['images_dir'])
+    (video_scan_times, flags_ids, tour_length, margin_till_1st_tour, magin_between_tours) = get_tour_details(\
+        video_path, tour_configuration['tours_details'])
+    if video_scan_times == None or flags_ids == None or tour_length == None:
+        exit()
+        
+    video_converter.convert_video(video_path, video_scan_times, flags_ids, tour_length, magin_between_tours, \
+                                    margin_till_1st_tour, tour_configuration['images_dir'])
             

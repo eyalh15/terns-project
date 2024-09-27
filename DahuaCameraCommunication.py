@@ -34,8 +34,7 @@ def URL_S_N(location):
 auth = HTTPDigestAuth(USER_NAME, PASSWORD)
 
 def getPTZValues(location):
-    # print('Commanding: ' + url + '?action=getStatus')
-    
+
     session = requests.Session()
     session.auth = (USER_NAME, PASSWORD)
     url = URL_S_N(location)

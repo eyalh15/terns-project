@@ -21,10 +21,8 @@ from Utilities.global_utils import GeneralUtils
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-r', '--images_dir_name', help='Directory name where the JPG images are located')
-args = parser.parse_args()
 # Read the directory path where images located
-images_dir_name = args.images_dir_name
-
+images_dir_name = parser.parse_args().images_dir_name
 
 config = configparser.ConfigParser()
 # Read the config file

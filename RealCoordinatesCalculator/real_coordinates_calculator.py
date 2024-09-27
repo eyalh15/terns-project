@@ -63,10 +63,10 @@ class RealCoordinatesCalculator:
     # This function read the PTZ modification CSV file
     def _read_ptz_modi_file(self, cam_number):
         rel_column = ['ptz_num', 'pitch', 'yaw', 'f']
-        print('updated!!!!')
-        ptz_modi_file_path = f'{self.ptz_modi_dir}/PTZ_modi_Cam_Values_{cam_number}_2.txt'
+        ptz_modi_file_path = f'{self.ptz_modi_dir}/PTZ_modi_Cam_Values_{cam_number}_mod.txt'
+        print(f'Loading file {ptz_modi_file_path}...')
         try:
-            # Read PTZ modification file
+            # Read PTZ modification file    
             ptz_modi_file = pd.read_csv(ptz_modi_file_path, sep='\t', usecols=rel_column)
         except FileNotFoundError:
             print(f"Error: The PTZ modification {ptz_modi_file_path} file does not exist in the dir.")

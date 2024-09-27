@@ -20,7 +20,6 @@ if __name__ == '__main__':
         iteration = 23
         # Looping till user intrerrupt
         while True:
-            print (iteration)
             (zoom, tilt, pan) = DahuaCameraCommunication.getPTZValues(location)
             # Write ptz values into file
             file.write(f'#{iteration} - {zoom} , {tilt}, {pan}\n')
