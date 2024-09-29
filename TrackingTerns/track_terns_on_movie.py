@@ -84,7 +84,7 @@ if __name__ == '__main__':
 
     config = configparser.ConfigParser()
     # Read the config file
-    config.read('tracking_config.ini', encoding="utf8")
+    config.read('track_movie_runner.ini', encoding="utf8")
     # Access values from the config file
     yolo_result_dir = config.get('General', 'yolo_result_dir')
     tracker_result_dir = config.get('General', 'tracker_result_dir')

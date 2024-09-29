@@ -11,6 +11,7 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(script_dir, os.pardir))
 # Add the project root to the Python path
 sys.path.append(project_root)
+
 from Utilities.global_utils import GeneralUtils
 
 class NestedTernsTracker:

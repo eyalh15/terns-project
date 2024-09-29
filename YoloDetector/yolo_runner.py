@@ -7,7 +7,6 @@ import shutil
 import argparse
 import configparser
 from PIL import Image
-from roboflow import Roboflow
 from ultralytics import YOLO
 
 
@@ -26,11 +25,11 @@ images_dir_name = parser.parse_args().images_dir_name
 
 config = configparser.ConfigParser()
 # Read the config file
-config.read('yolo_config.ini', encoding="utf8")
+config.read('yolo_runner.ini', encoding="utf8")
 # Directory path where the yolo result will be located
-images_dirs_path = config.get('General', 'images_dirs_path')
+images_dirs_path = config.get('General', 'images_dirs')
 # Directory path where the yolo result will be located
-result_dirs_path = config.get('General', 'result_dir_path')
+result_dirs_path = config.get('General', 'result_dir')
 # number of images to run on YOLO model in each iteration
 images_chunk_size = int(config.get('General', 'images_chunk_size'))
 

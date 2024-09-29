@@ -16,17 +16,27 @@ The notebook read the video
 #### Steps
 
 1. Navigate to the ConvertVideoToImages directory.
-3. Specify the paths for the videos directory(videos_dir) and the output image directory(images_dir) in the tours_details.json file.
+2. Specify the paths for the videos directory(videos_dir) and the output image directory(images_dir) in the tours_details.json file.
 3. Specify the dates you want to process in the convert_terns_video_to_images.ini file.
 4. Open the run_video_converter.ipynb notebook.
-5. Run all cells to convert the videos into categorized images based on camera positions.
+5. Run all cells.
 
 ### Notebook 2: Run Yolo Object Detector on Images
-This notebook run 
+This notebook applies the YOLO V8 object detection model to the categorized images from Notebook 1. The model is trained to detect Little Tern and Common Tern species in each image. After detection, it produces bounding boxes around the birds and saves the results for further analysis.
 #### Steps
 
-1. Navigate to the ConvertVideoToImages directory.
-3. Specify the paths for the videos directory(videos_dir) and the output image directory(images_dir) in the tours_details.json file.
-3. Specify the dates you want to process in the convert_terns_video_to_images.ini file.
-4. Open the run_video_converter.ipynb notebook.
-5. Run all cells to convert the videos into categorized images based on camera positions.
+1. Navigate to the YoloDetector directory.
+2. Specify the paths for the input image directory (images_dirs) and the output results directory(result_dir) in the yolo_runner.ini file.
+3. Specify the dates you want to detect terns on in the yolo_runner.ini file.
+4. Open the yolo_runner.ipynb notebook.
+5. Run all cells.
+
+
+### Notebook 3: Tracking Objects in Movie
+This notebook processes a one scan output from the YOLO object detection to track individual birds across multiple images, creating a sequence of detected boxes for each bird.
+
+1. Navigate to the TrackingTerns directory.
+2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file
+3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
+4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
+5. Run all cells.
