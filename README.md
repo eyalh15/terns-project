@@ -17,7 +17,7 @@ The notebook read the video
 
 1. Navigate to the ConvertVideoToImages directory.
 2. Specify the paths for the videos directory(videos_dir) and the output image directory(images_dir) in the tours_details.json file.
-3. Specify the dates you want to process in the convert_terns_video_to_images.ini file.
+3. Specify the dates you want to process in the run_video_converter.ini file.
 4. Open the run_video_converter.ipynb notebook.
 5. Run all cells.
 
@@ -32,8 +32,18 @@ This notebook applies the YOLO V8 object detection model to the categorized imag
 5. Run all cells.
 
 
-### Notebook 3: Tracking Objects in Movie
+### Notebook 3: Tracking Birds in one Scan
 This notebook processes a one scan output from the YOLO object detection to track individual birds across multiple images, creating a sequence of detected boxes for each bird.
+
+1. Navigate to the TrackingTerns directory.
+2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file
+3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
+4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
+5. Run all cells.
+
+
+### Notebook 4: Tracking Individual Breeding Birds Across Multiple Scans
+This notebook processes multiple one-scan outputs to to track individual birds across different times and locations. Identifying birds that appear in the same location across different scans to detect breeding birds. It creates a sequence of bounding boxes across multiple scans for each bird.
 
 1. Navigate to the TrackingTerns directory.
 2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file

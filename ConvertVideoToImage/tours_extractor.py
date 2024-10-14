@@ -81,8 +81,6 @@ if __name__=='__main__':
         exit()
     
     video_path = str(videos_dir / video_name)
-    print(type(video_path))
-    print(video_path)
     
     video_converter = VideoConverter()
     (video_scan_times, flags_ids, tour_length, margin_till_1st_tour, magin_between_tours) = get_tour_details(\
