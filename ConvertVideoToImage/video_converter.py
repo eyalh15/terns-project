@@ -159,21 +159,14 @@ class VideoConverter:
         while not is_tour_found:
             ret, curr_frame = video.read()
             if not ret:
-                print(count_frames)
                 print("Error: Failed to capture frame from video.")
                 exit()
 
             count_frames += 1
 
-            if count_frames == 10:
-                print(count_frames)
-                cv2.imwrite('after10frames.png', curr_frame)
-                self._display_frame(curr_frame)
             if count_frames % 100 == 0:
                 object_detections_in_frames = []
                 iou_list = []
-            if count_frames % 1000 == 0:
-                self._display_frame(curr_frame)
 
             try:
                 # predict image labels by YOLO model
@@ -182,9 +175,6 @@ class VideoConverter:
                 print(f"Error during model inference: {str(e)}")            
                             
             current_predictions = json.loads(result.to_json())
-
-            # box_square_average = self._average_box_squares(current_predictions)
-            # print(box_square_average)
 
             if len(current_predictions) == 0:
                 continue
@@ -195,10 +185,8 @@ class VideoConverter:
                 iou_boxes_manager = iouBoxesManager()
                 iou = iou_boxes_manager.calc_iou_boxes_seq_vs_boxes_sequences(\
                     current_predictions, object_detections_in_frames)
-                # print(iou)
                 if len(iou_list) == 3:
                     iou_threshold = (sum(iou_list)/len(iou_list)) / 8
-                    # print(f'iou_threshold:',iou_threshold)
                 if len(iou_list) < 4:
                     iou_list.append(iou)
                 else:
@@ -250,6 +238,8 @@ class VideoConverter:
         tours_number = self._get_tours_number_in_video(video_path, tour_length)
 
         self._skip_seconds(video, margin_till_1st_tour - 4) 
+        _, curr_frame = video.read()
+        cv2.imwrite('after_skip_dead_time.png', curr_frame)
 
         for tour_num in range(tours_number):
             # Skip tour if it already exist
@@ -275,9 +265,10 @@ class VideoConverter:
             if tour_num > 0:
                 self._skip_seconds(video, magin_between_tours - 5)
 
-            print('skipping into tour...')
             # Skip to the frame when tour starts
             self._skip_into_tour(video)
+            _, curr_frame = video.read()
+            cv2.imwrite('tour_will_start.png', curr_frame)            
 
             is_tour_ended = False
             while not is_tour_ended:
@@ -317,25 +308,22 @@ class VideoConverter:
 
                             if (not all_zero_ious and self._is_iou_under_threshold(iou_list, iou_threshold)) \
                                 or seconds_passed_in_flag > 17:
-                                flag_index = flag_index + 1
 
-                                if flag_index > flags_number - 1:
+                                if flag_index == flags_number - 1:
                                     is_tour_ended = True          
                                 else:
-                                    print(f'flag id: {flags_ids[flag_index]}')
-
                                     if flags_ids[flag_index] == 138:
                                         min_frames_in_flag = 5                                                                           
                                     else:
                                         min_frames_in_flag = 12
 
-                                    if flags_ids[flag_index - 1] == 123:
+                                    if flags_ids[flag_index] == 123:
                                         camera_move_time = 7
-                                    elif flags_ids[flag_index - 1] == 49:
+                                    elif flags_ids[flag_index] == 49:
                                         camera_move_time = 4
-                                    elif flags_ids[flag_index - 1] == 52:
+                                    elif flags_ids[flag_index] == 52:
                                         camera_move_time = 4
-                                    elif flags_ids[flag_index - 1] == 83:
+                                    elif flags_ids[flag_index] == 83:
                                         camera_move_time = 5                                            
                                     else:
                                         camera_move_time = 2
@@ -344,6 +332,8 @@ class VideoConverter:
                                     self._skip_seconds(video, camera_move_time)
                                     seconds_passed_in_flag = 0                        
                                     iou_list = []
+
+                                flag_index = flag_index + 1                                    
                                 continue
                 
                 # Check if one second has passed
@@ -364,7 +354,6 @@ class VideoConverter:
                     frame_count = 0
                     
                 frame_count += 1
-                print(4)
             
         # Release the video file
         video.release()

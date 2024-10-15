@@ -33,12 +33,22 @@ This notebook applies the YOLO V8 object detection model to the categorized imag
 
 
 ### Notebook 3: Tracking Birds in one Scan
-This notebook processes a one scan output from the YOLO object detection to track individual birds across multiple images, creating a sequence of detected boxes for each bird.
+This notebook processes a one scan output from YOLO Object Detection to track individual birds across multiple images, creating a sequence of detected boxes for each bird.
 
 1. Navigate to the TrackingTerns directory.
+2. Specify both paths for input YOLO results (yolo_result_dir) and output results directory (tracker_result_dir) in the track_movie_runner.ini file.
+3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
+4. Open the track_movie_runner.ipynb notebook.
+5. Run all cells.
+
+
+### Notebook 4: Daily Count breeding birds
+This notebook processes multiple one-scan outputs to to track individual birds across different times and locations. Identifying birds that appear in the same location across different scans to detect breeding birds. It creates a sequence of bounding boxes across multiple scans for each bird.
+
+1. Navigate to the DecisionTreeClassifier directory.
 2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file
 3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
-4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
+4. Open the daily_count_brooders.ipynb notebook.
 5. Run all cells.
 
 
@@ -50,3 +60,21 @@ This notebook processes multiple one-scan outputs to to track individual birds a
 3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
 4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
 5. Run all cells.
+
+### Notebook 5: Aggregate multiple scans results and display terns count in one day
+<!-- This notebook processes multiple one-scan outputs to to track individual birds across different times and locations. Identifying birds that appear in the same location across different scans to detect breeding birds. It creates a sequence of bounding boxes across multiple scans for each bird.
+
+1. Navigate to the TrackingTerns directory.
+2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file
+3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
+4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
+5. Run all cells. -->
+
+### Notebook 5: Count breeding birds
+<!-- This notebook processes multiple one-scan outputs to to track individual birds across different times and locations. Identifying birds that appear in the same location across different scans to detect breeding birds. It creates a sequence of bounding boxes across multiple scans for each bird.
+
+1. Navigate to the TrackingTerns directory.
+2. Specify paths for the input YOLO results (yolo_result_dir) and the output results directory (tracker_result_dir) in the track_movie_runner.ini file
+3. Specify the dates on which you want to track terns in the track_movie_runner.ini file.
+4. Open the yolo_runner.ipynb notebook, where you'll likely process the images for bird detection using YOLO.
+5. Run all cells. -->
