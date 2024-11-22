@@ -6,11 +6,6 @@ import configparser
 import numpy as np
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
-from scipy.ndimage import measurements
-
-
-from PIL import Image
-from datetime import datetime, date, time
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,20 +19,20 @@ class VideoConverter:
     def __init__(self):
         config = configparser.ConfigParser()
         # Read the config file
-        config.read('video_converter.ini', encoding="utf8")
+        config.read('run_video_converter.ini', encoding="utf8")
         # Load a model
-        model_path = config.get('Yolo', 'model_path').replace('\\', '/')
+        yolo_path = config.get('General', 'yolo_path').replace('\\', '/')
         # Check if model file exists
-        if not os.path.exists(model_path):
-            print(f"Model path does not exist: {model_path}")
+        if not os.path.exists(yolo_path):
+            print(f"Model path does not exist: {yolo_path}")
             exit()
         
         # Loading the pretrained model
         try:
-            self._model = YOLO(model_path)
-            print(f"Model loaded successfully from {model_path}")
+            self._model = YOLO(yolo_path)
+            print(f"Model loaded successfully from {yolo_path}")
         except Exception as e:
-            print(f"Error loading model from {model_path}: {str(e)}")
+            print(f"Error loading model from {yolo_path}: {str(e)}")
 
 
     # This function check if average of any combination of all items exept one item is lower than a threshold
@@ -252,7 +247,6 @@ class VideoConverter:
             utils_lib.create_directory(f'{output_dir}/{video_name}/tour{tour_num}')
 
             frame_count = 0
-            elapsed_time = 0
             flag_index = 0
             moves_detect_iterate_cnt = 0
             seconds_passed_in_flag = 0
@@ -268,7 +262,7 @@ class VideoConverter:
             # Skip to the frame when tour starts
             self._skip_into_tour(video)
             _, curr_frame = video.read()
-            cv2.imwrite('tour_will_start.png', curr_frame)            
+            # cv2.imwrite('tour_will_start.png', curr_frame)            
 
             is_tour_ended = False
             while not is_tour_ended:
@@ -309,11 +303,11 @@ class VideoConverter:
                             if (not all_zero_ious and self._is_iou_under_threshold(iou_list, iou_threshold)) \
                                 or seconds_passed_in_flag > 17:
 
-                                if flag_index == flags_number - 1:
+                                if flag_index >= flags_number - 1:
                                     is_tour_ended = True          
                                 else:
-                                    if flags_ids[flag_index] == 138:
-                                        min_frames_in_flag = 5                                                                           
+                                    if flags_ids[flag_index] == 137:
+                                        min_frames_in_flag = 5
                                     else:
                                         min_frames_in_flag = 12
 

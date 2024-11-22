@@ -126,13 +126,13 @@ def skip_into_tour(video):
         difference_in_sec = calc_difference(frame_time, tour_start_time)
 
         if not is_skip_done and difference_in_sec > 0:
-            print(f'Skipping {difference_in_sec} seconds..')
+            # print(f'Skipping {difference_in_sec} seconds..')
             skip_seconds(video, difference_in_sec - 1)                
             is_skip_done = True
             continue
         
         if tour_start_time.minute == frame_time.minute and tour_start_time.second == frame_time.second:
-            print('Tour part found..')
+            # print('Tour part found..')
             is_tour_found = True
         else:
             continue
@@ -240,7 +240,7 @@ def extract_frames(video_path, output_path):
             try:
                 # Save the frame as an image
                 cv2.imwrite(output_filename, curr_frame)
-                print(f'flag #{flag_number}, image #{int(seconds_passed_in_flag)}')
+                # print(f'flag #{flag_number}, image #{int(seconds_passed_in_flag)}')
             except Exception as e:
                 print(f"Error saving image: {output_filename}")
                 print(f"Exception: {e}")

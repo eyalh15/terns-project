@@ -30,15 +30,15 @@ class NestedTernsTracker:
         return objects_assosiation
 
 
-    def track_nested_terns(self, movies_names, tracked_terns_dir, videoConverterDir):
+    def track_breeding_terns(self, movies_names, one_scan_result_dir, mult_scans_result_dir, video_converter_dir):
         nests_count = 0
         # Get flags list from tracking on movie result directory
-        flags_list = [os.path.splitext(file)[0] for file in os.listdir(f'{tracked_terns_dir}/TernsOnMovie/{movies_names[0]}')\
+        flags_list = [os.path.splitext(file)[0] for file in os.listdir(f'{one_scan_result_dir}/{movies_names[0]}')\
                       if file.endswith(".png")]
 
         for flag in flags_list:
             # Get all tracked terns(in jsons) of the specific flag 
-            tracked_terns_jsons = [f'{tracked_terns_dir}/TernsOnMovie/{movie_name}/{flag}.json' \
+            tracked_terns_jsons = [f'{one_scan_result_dir}/{movie_name}/{flag}.json' \
                                    for movie_name in movies_names]
 
             track_boxes_across_movies = TrackBoxesAcrossMovies()
@@ -75,9 +75,9 @@ class NestedTernsTracker:
             cam_number = self._get_camera_number(movies_names[0])
             dir_name = f'{dir_name}_{cam_number}'
 
-            result_dir = f'{tracked_terns_dir}/NestedTerns/{dir_name}'
+            result_dir = f'{mult_scans_result_dir}/{dir_name}'
             # Make a flag report
-            self._report_flag_nests(movies_names, f'{result_dir}/{flag}', tracked_terns_jsons, objects_assosiations, videoConverterDir)
+            self._report_flag_nests(movies_names, f'{result_dir}/{flag}', tracked_terns_jsons, objects_assosiations, video_converter_dir)
 
         # Short report for nests total ammount
         nests_amount_json = {
@@ -302,7 +302,7 @@ class NestedTernsTracker:
         
 
     def _report_flag_nests(self, movies_names, flag_dir, tracked_terns_jsons, objects_assosiation, \
-                              videoConverterDir):
+                              video_converter_dir):
         # Create directory for flag results
         GeneralUtils.create_directory(flag_dir)
         # holds box location(by calculate the average) of every tracked object 
@@ -321,9 +321,13 @@ class NestedTernsTracker:
                     continue
                 
                 # images_dir = f'{yolo_results_dir}/{movies_names[index]}/Images'
-                images_dir = f'{videoConverterDir}/{movies_names[index]}'
+                images_dir = f'{video_converter_dir}/{movies_names[index]}'
                 file_name = f'{movies_names[index].replace("/", "_")}.jpg'
 
+                print(images_dir)
+                print(flag_dir)
+                print(os.path.basename(tracked_objects[0]['predictions'][0]["image_path"]))
+                print(file_name)
                 GeneralUtils.copy_image(images_dir, flag_dir, os.path.basename(tracked_objects[0]['predictions'][0]["image_path"]), file_name)
 
                 for i, object_assosiation in enumerate(objects_assosiation):
@@ -362,16 +366,18 @@ class NestedTernsTracker:
 if __name__=='__main__':
     config = configparser.ConfigParser()
     # Read the config file
-    config.read('tracking_nested_terns_config.ini', encoding="utf8")
+    config.read('track_breeding_terns.ini', encoding="utf8")
     # Access values from the config file
-    videoConverterDir = config.get('dirs_paths', 'video_converter_dir')
-    tracked_objects_dir = config.get('dirs_paths', 'tracked_objects_dir')
+    images_dir = config.get('General', 'images_dir')
+    one_scan_result_dir = config.get('General', 'one_scan_result_dir')
+    mult_scans_result_dir = config.get('General', 'mult_scans_result_dir')
 
     # Extract tours list names from command-line arguments
     movies_names = sys.argv[1:]
         
     nested_terns_tracker = NestedTernsTracker()
-    nested_terns_tracker.track_nested_terns(movies_names, tracked_objects_dir, videoConverterDir)
+    nested_terns_tracker.track_breeding_terns(movies_names, one_scan_result_dir, mult_scans_result_dir, 
+                                            images_dir)
     
 
     

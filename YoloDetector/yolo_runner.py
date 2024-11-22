@@ -27,14 +27,14 @@ config = configparser.ConfigParser()
 # Read the config file
 config.read('yolo_runner.ini', encoding="utf8")
 # Directory path where the yolo result will be located
-images_dirs_path = config.get('General', 'images_dirs')
+images_dir_path = config.get('General', 'images_dir')
 # Directory path where the yolo result will be located
 result_dirs_path = config.get('General', 'result_dir')
 # number of images to run on YOLO model in each iteration
 images_chunk_size = int(config.get('General', 'images_chunk_size'))
 
 # Path directory where the images are located
-images_dir_path = f'{images_dirs_path}/{images_dir_name}'
+images_dir_path = f'{images_dir_path}/{images_dir_name}'
 # Path directory where the results will be located
 results_dir_path = f'{result_dirs_path}/{images_dir_name}'
 
