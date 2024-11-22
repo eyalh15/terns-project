@@ -3,6 +3,7 @@
 *.jpeg
 
 *.txt
+*.xml
 *.json
 
 *.pyc
