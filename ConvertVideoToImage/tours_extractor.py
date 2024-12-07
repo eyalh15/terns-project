@@ -87,7 +87,11 @@ if __name__=='__main__':
         video_path, tour_configuration['tours_details'])
     if video_scan_times == None or flags_ids == None or tour_length == None:
         exit()
-        
-    video_converter.convert_video(video_path, video_scan_times, flags_ids, tour_length, magin_between_tours, \
+    
+    video_converter.convert_video(video_path, flags_ids, tour_length, magin_between_tours, \
                                     margin_till_1st_tour, tour_configuration['images_dir'])
+    
+
+
+
             

@@ -63,7 +63,6 @@ This notebook classify and counts terns on colony on multiple one-scan outputs f
 
 
 ## Detecting breeding terns
-<!--  -->
 ### 5. track_breeding_terns_runner.ipynb Notebook: Tracking Breeding Terns
 This notebook processes multiple one-scan outputs from part 3 to track terns across multiple scans. The tracks help identify breeding terns, which tend to remain in the same location over time.
 
@@ -76,7 +75,7 @@ This notebook processes multiple one-scan outputs from part 3 to track terns acr
 3. Open the track_breeding_terns_runner.ipynb notebook.
 4. Run all cells.
 
-<!--  -->
+
 ### 6: count_breeding_terns.ipynb Notebook: Classifying and counting breeding terns
 This notebook classifies and counts breeding terns within the colony, using tracking data from Part 5 as input.
 

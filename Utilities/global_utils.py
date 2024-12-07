@@ -12,16 +12,22 @@ class GeneralUtils:
             try:
                 # Remove the directory and its contents
                 shutil.rmtree(dir_path)
-                print(f"Directory '{dir_path}' removed successfully.")
             except Exception as e:
                 print(f"Failed to remove '{dir_path}': {e}")
 
         # Create the directory
         try:
             os.makedirs(dir_path)
-            print(f"Directory '{dir_path}' created successfully.")
         except Exception as e:
-            print(f"Failed to create '{dir_path}': {e}")        
+            print(f"Failed to create '{dir_path}': {e}")       
+
+    @staticmethod
+    # Delete directory and its contents    
+    def delete_directory(dir_path):
+        try:
+            shutil.rmtree(dir_path)
+        except Exception as e:
+            raise Exception(f"Failed to remove '{dir_path}': {e}")
 
     @staticmethod
     # Define a custom sorting key function to extract the numeric part of the filenames
