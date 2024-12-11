@@ -4,7 +4,7 @@ class TrackBoxesAcrossMovies:
     # This function assosiate tracked objects of a scan with tracked objects from other scans
     # The assosiation means the tracked object from the different scan are of the same object
     def assosiate_tracked_objects(self, cur_tracked_objects, previous_tracked_objects, objects_assosiations, \
-                                  iou_threshold = 0.1):
+                                  iou_threshold = 0.08):
         prev_scans_number = len(previous_tracked_objects)
         # If the objects assosiations is empty then add all current tracked objects to objects assosiations 
         if len(objects_assosiations) == 0:
@@ -23,7 +23,8 @@ class TrackBoxesAcrossMovies:
                 if suit_object_found[idx]:
                     object_ious.append(0)
                     continue
-                iou_cnt, iou_sum = 0 ,0
+                
+                iou_cnt, iou_sum = 0, 0
                 for i in range(len(object_assosiation)):
                     object_index_in_specific_scan = object_assosiation[i]
                     # The value -1 means the object sequence did not found a suitable object in scan i
@@ -32,13 +33,13 @@ class TrackBoxesAcrossMovies:
                                                             previous_tracked_objects[i][object_index_in_specific_scan])
                         iou_cnt += 1
 
-                iou = iou_sum / iou_cnt
+                iou = iou_sum / iou_cnt if iou_cnt > 0 else 0
                 object_ious.append(iou)
 
             # Get the maximum iou index and value
             index, max_iou = max(enumerate(object_ious), key=lambda x: x[1])
 
-            if max_iou > iou_threshold:
+            if max_iou >= iou_threshold:
                 objects_assosiations[index].append(cur_tracked_object_idx)
                 suit_object_found[index] = True
             else:

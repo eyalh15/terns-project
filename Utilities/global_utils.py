@@ -1,10 +1,27 @@
 import os
 import re
 import cv2
+import json
 import shutil
 import numpy as np
 
 class GeneralUtils:
+    @staticmethod
+    def _load_json(file_path):
+        """
+        Helper function to load JSON content from a file.
+        """
+        try:
+            with open(file_path, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            print(f"File not found: {file_path}")
+            return None
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON in file: {file_path}")
+            return None
+
+
     @staticmethod
     def create_directory(dir_path):
         # Remove the directory if it already exists
@@ -21,6 +38,7 @@ class GeneralUtils:
         except Exception as e:
             print(f"Failed to create '{dir_path}': {e}")       
 
+
     @staticmethod
     # Delete directory and its contents    
     def delete_directory(dir_path):
@@ -28,6 +46,7 @@ class GeneralUtils:
             shutil.rmtree(dir_path)
         except Exception as e:
             raise Exception(f"Failed to remove '{dir_path}': {e}")
+
 
     @staticmethod
     # Define a custom sorting key function to extract the numeric part of the filenames
@@ -39,6 +58,7 @@ class GeneralUtils:
             return x, y
         return 0, 0  # Default values if extraction fails    
 
+
     @staticmethod
     def copy_image(source_dir, target_dir, image_name, new_name):
         source_path = os.path.join(source_dir, image_name)
@@ -46,7 +66,6 @@ class GeneralUtils:
 
         try:
             shutil.copy2(source_path, target_path)
-            print(f"Image '{image_name}' copied successfully from {source_dir} to {target_dir}.")
         except Exception as e:
             print(f"Failed to copy image '{image_name}': {e}")
 
@@ -80,6 +99,7 @@ class GeneralUtils:
         ('skyblue', (135, 206, 235)),        
         ]
     
+
     @staticmethod
     def draw_boxes(tracked_object, image_path, color, i):
         image = cv2.imdecode(np.fromfile(image_path, dtype=np.uint8), cv2.IMREAD_UNCHANGED)
@@ -109,3 +129,4 @@ class GeneralUtils:
                 isIDWrited = True
 
         cv2.imwrite(image_path, image)
+

@@ -12,14 +12,16 @@ project_root = os.path.abspath(os.path.join(script_dir, os.pardir))
 sys.path.append(project_root)
 from Utilities.global_utils import GeneralUtils
 
+trackId = 0
+
 
 class TrackingObjectsInImagesSequence:
     
-    def __init__(self, tracking_result_dir):
+    def __init__(self, tracking_result_dir, MIN_TRACK_BOXES = 4):
         self._tracked_objects = []
         self._iou_box_manager = iouBoxesManager()
         self._tracking_result_dir = tracking_result_dir
-
+        self._min_track_boxes = MIN_TRACK_BOXES
     
     def update_tracked_objects(self, predictions):
         if len(self._tracked_objects) == 0:
@@ -50,7 +52,6 @@ class TrackingObjectsInImagesSequence:
     
 
     def make_report(self, flag_id, yolo_images_directory, frames_number):
-        
         if len(self._tracked_objects) == 0:
             file_content = {
                 "frames_number": frames_number,
@@ -67,14 +68,22 @@ class TrackingObjectsInImagesSequence:
 
         GeneralUtils.copy_image(yolo_images_directory, self._tracking_result_dir ,image_name, \
                                 f'flag{flag_id}.png')
-
+                          
+        self._tracked_objects = [tracked_object for tracked_object in self._tracked_objects \
+                  if len(tracked_object['predictions']) >= self._min_track_boxes]
+        
         for i, tracked_object in enumerate(self._tracked_objects):
+            
             tracked_object['iou'] = sum(tracked_object['iou']) / len(tracked_object['iou']) if len(tracked_object['iou']) > 0 else 0
+            
+            global trackId
+            tracked_object['id'] = trackId
+            trackId += 1
 
-            if len(tracked_object['predictions']) > 2:
-                # Define one rectangles color for an object boxes sequence 
-                color = GeneralUtils.colors_with_names[i % len(GeneralUtils.colors_with_names)][1]
-                GeneralUtils.draw_boxes(tracked_object['predictions'], f'{self._tracking_result_dir}/flag{flag_id}.png', color, i)
+            # Define one rectangles color for an object boxes sequence 
+            color = GeneralUtils.colors_with_names[i % len(GeneralUtils.colors_with_names)][1]
+            GeneralUtils.draw_boxes(tracked_object['predictions'], f'{self._tracking_result_dir}/flag{flag_id}.png', color, i)
+        
         
         # Sort tracked objects from higher to lower length of bounding boxes
         file_content = {

@@ -30,7 +30,7 @@ class NestedTernsTracker:
         return objects_assosiation
 
 
-    def track_breeding_terns(self, movies_names, one_scan_result_dir, mult_scans_result_dir, video_converter_dir):
+    def track_breeding_terns(self, movies_names, one_scan_result_dir, mult_scans_result_dir, video_converter_dir, classif_dir):
         nests_count = 0
         # Get flags list from tracking on movie result directory
         flags_list = [os.path.splitext(file)[0] for file in os.listdir(f'{one_scan_result_dir}/{movies_names[0]}')\
@@ -77,7 +77,7 @@ class NestedTernsTracker:
 
             result_dir = f'{mult_scans_result_dir}/{dir_name}'
             # Make a flag report
-            self._report_flag_nests(movies_names, f'{result_dir}/{flag}', tracked_terns_jsons, objects_assosiations, video_converter_dir)
+            self._report_flag_nests(movies_names, f'{result_dir}/{flag}', tracked_terns_jsons, objects_assosiations, video_converter_dir, classif_dir)
 
         # Short report for nests total ammount
         nests_amount_json = {
@@ -86,6 +86,7 @@ class NestedTernsTracker:
 
         with open(f'{result_dir}/report.json', 'w') as json_file:
             json.dump(nests_amount_json, json_file, indent=4)
+
 
     def _get_camera_number(self, movie_name):
         # Regular expression pattern to extract the number
@@ -158,6 +159,7 @@ class NestedTernsTracker:
             }
         
         return class_average_confidences
+    
 
     def _count_object_classes(self, tracked_object):
         # Initialize dictionary to store counts of classes
@@ -201,22 +203,32 @@ class NestedTernsTracker:
             print("Total weight is zero, cannot calculate weighted average.")
             return None
 
+
     # This function takes list of details of the same object from different movie scans
     # and aggregate this details. For ex. it takes list of average boxes location from 
     # different movies and calculate the average box.
-    def _aggregate_boxes_across_movies(self, object_sequence_details):
+    def _create_track_representation(self, object_sequence_details, flag_tracks_class):
         class_aggregated_data = { 'classes' : {} }
         sum_locations = {}
         total_boxes, total_frames, total_movement_rate = 0, 0, 0
+        track_classes = []
         # Iterate over each object data dictionary
-        for seq_one_movie_details in object_sequence_details:
-            box_location_avg = seq_one_movie_details['box_location_avg']
-            classes_freq = seq_one_movie_details['classes_freq']
+        for seq_one_scan_details in object_sequence_details:
+            scan_name = seq_one_scan_details['scan_name']
+            track_id = str(seq_one_scan_details['id'])
+
+            if flag_tracks_class and (scan_name in flag_tracks_class) and \
+             (flag_tracks_class[scan_name] and (track_id in flag_tracks_class[scan_name])):
+                track_class = flag_tracks_class[scan_name][track_id]
+                track_classes.append(track_class)
+            
+            box_location_avg = seq_one_scan_details['box_location_avg']
+            classes_freq = seq_one_scan_details['classes_freq']
 
             # Sum the total number of boxes and frames
-            total_boxes += seq_one_movie_details['boxes_count']
-            total_frames += seq_one_movie_details['flag_frames_count']
-            total_movement_rate += seq_one_movie_details['movement_rate']
+            total_boxes += seq_one_scan_details['boxes_count']
+            total_frames += seq_one_scan_details['flag_frames_count']
+            total_movement_rate += seq_one_scan_details['movement_rate']
 
             # Aggregate box locations
             for key, value in box_location_avg.items():
@@ -254,8 +266,16 @@ class NestedTernsTracker:
         class_aggregated_data['average_location'] = avg_location
         class_aggregated_data['detection_ratio'] = total_boxes / total_frames if total_frames > 0 else 0.0
         class_aggregated_data['movement_rate'] = total_movement_rate / len(object_sequence_details) if len(object_sequence_details) > 0 else 0.0
-        
+        class_aggregated_data['track_classes'] = track_classes
+
         return class_aggregated_data
+
+
+    def _read_classifications(self, classif_dir, scans_names, flag):
+        return {
+            scan_name: GeneralUtils._load_json(os.path.join(classif_dir, scan_name, f"{flag}.json"))
+            for scan_name in scans_names
+        }
 
 
     def _agregate_boxes_details(self, object_details):
@@ -301,8 +321,9 @@ class NestedTernsTracker:
             return None
         
 
-    def _report_flag_nests(self, movies_names, flag_dir, tracked_terns_jsons, objects_assosiation, \
-                              video_converter_dir):
+    def _report_flag_nests(self, scans_names, flag_dir, tracked_terns_jsons, objects_assosiation, \
+                              video_converter_dir, classif_dir):
+        flag = os.path.basename(flag_dir)
         # Create directory for flag results
         GeneralUtils.create_directory(flag_dir)
         # holds box location(by calculate the average) of every tracked object 
@@ -320,14 +341,9 @@ class NestedTernsTracker:
                 if len(tracked_objects) == 0:
                     continue
                 
-                # images_dir = f'{yolo_results_dir}/{movies_names[index]}/Images'
-                images_dir = f'{video_converter_dir}/{movies_names[index]}'
-                file_name = f'{movies_names[index].replace("/", "_")}.jpg'
+                images_dir = f'{video_converter_dir}/{scans_names[index]}'
+                file_name = f'{scans_names[index].replace("/", "_")}.jpg'
 
-                print(images_dir)
-                print(flag_dir)
-                print(os.path.basename(tracked_objects[0]['predictions'][0]["image_path"]))
-                print(file_name)
                 GeneralUtils.copy_image(images_dir, flag_dir, os.path.basename(tracked_objects[0]['predictions'][0]["image_path"]), file_name)
 
                 for i, object_assosiation in enumerate(objects_assosiation):
@@ -335,49 +351,57 @@ class NestedTernsTracker:
                         continue
 
                     tracked_object = tracked_objects[object_assosiation[index]]
-                    # Boxes of assosiated brooder terns are colored on the same color
+                    # Boxes of assosiated breeding terns are colored on the same color
                     color = GeneralUtils.colors_with_names[i % len(GeneralUtils.colors_with_names)][1]
                     GeneralUtils.draw_boxes([tracked_object['predictions'][0]], f'{flag_dir}/{file_name}', color, i)
 
-                    # Intermediation aggregation of the tracked object boxes(only for the boxes from one video)
+                    
+                    # Intermediation aggregation of the tracked object boxes(only for the boxes from one scan)
                     object_sequences_details[i].append({
+                        'scan_name': scans_names[index],
+                        'id': tracked_object['id'],
                         'box_location_avg': self._calc_box_location_average(tracked_object['predictions']),
                         'classes_freq': self._aggregate_classes_freq(tracked_object['predictions']),
                         'boxes_count': len(tracked_object['predictions']),
                         'flag_frames_count': tracked_objects_json["frames_number"],
-                        'movement_rate': tracked_object['iou']
+                        'movement_rate': tracked_object['iou'],
                     })
 
-        nests_details = []
+        # Read flag jsons of classifications
+        flag_tracks_class = self._read_classifications(classif_dir, scans_names, flag)
+        # print('flag: ', flag)
+        # print('tracks number - ', len(object_sequences_details))
+        tracks_details = []
         # Aggregate boxes of the same object from different movies 
         for object_sequence_details in object_sequences_details:
-            brooder_details = self._aggregate_boxes_across_movies(object_sequence_details)
-            nests_details.append(brooder_details)
+            track_details = self._create_track_representation(object_sequence_details, flag_tracks_class)
+            tracks_details.append(track_details)
 
         flag_report_json = {
-            'nests_details': nests_details,
+            'nests_details': tracks_details,
             'nests_total': len(objects_assosiation)
         }
         
         with open(f'{flag_dir}/report.json', 'w') as json_file:
             json.dump(flag_report_json, json_file, indent=4)
-        
+                
 
 if __name__=='__main__':
     config = configparser.ConfigParser()
     # Read the config file
     config.read('track_breeding_terns.ini', encoding="utf8")
     # Access values from the config file
-    images_dir = config.get('General', 'images_dir')
+    video_converter_dir = config.get('General', 'video_converter_dir')
     one_scan_result_dir = config.get('General', 'one_scan_result_dir')
     mult_scans_result_dir = config.get('General', 'mult_scans_result_dir')
+    classif_dir = config.get('General', 'classification_dir')
 
     # Extract tours list names from command-line arguments
     movies_names = sys.argv[1:]
         
     nested_terns_tracker = NestedTernsTracker()
     nested_terns_tracker.track_breeding_terns(movies_names, one_scan_result_dir, mult_scans_result_dir, 
-                                            images_dir)
+                                            video_converter_dir, classif_dir)
     
 
     
