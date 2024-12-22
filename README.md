@@ -98,7 +98,7 @@ This notebook processes multiple one-scan outputs from part 3 to track terns acr
 ### 7: report_breeding_terns.ipynb Notebook: Classifying and counting breeding terns
 This notebook classifies and counts breeding terns within the colony, using tracking data from Part 5 as input.
 
-1. Navigate to the ClassifyTerns directory.
+1. Navigate to the FinalResults directory.
 2. Specify the following settings in the report_breeding_terns.ini file:
     * **date**: Date for which you want to classify and count breeding terns.
     * **breeding_tracks_dir**: Path to the breeding terns tracking results directory.
