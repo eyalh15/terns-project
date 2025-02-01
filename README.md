@@ -3,17 +3,16 @@
 Automatic Detecting and counting endangered colonial breeding terns using machine learning methods
 
 ## Description
-
 In this project, we developed a fully automated deep-learning-based algorithm to identify, count, and map breeding seabirds, focusing on two tern species in Israel: the vulnerable Common Tern (Sterna hirundo) and the endangered Little Tern (Sternula albifrons) in a challenging environment, in a large and densely populated breeding colony containing breeding pairs of two visually similar species. Using YOLOv8 for initial object detection, we enhanced classification performance by integrating ecological and behavioral features, including spatial fidelity, movement patterns, and size through camera calibration techniques.
 For a detailed description of the methods and results, please refer to our paper.
 
 ## Mapping Camera Positions to Real-World Coordinates
 We setup preset camera positions with specific zoom, yaw and pitch settings, enabling automated scanning tours at predefined intervals and times between the present positions location. 
-Automated scans were conducted multiple times daily. Each camera focused on its designated area, with combined coverage of the entire island.
-The cameras were calibrated using a drone image of the colony anchored to geographic coordinates. By utilizing the drone image along with recorded zoom levels, pitch, and yaw for each frame, we calculated the precise location of each pixel on the island. This calibration allowed us to convert pixel dimensions into centimeters, enabling the actual size of each bounding box to be calculated and incorporated as a feature in the classifier.
+Automated scans were conducted multiple times daily. Each camera focused on its designated area, with combined coverage of the entire island.  
+The cameras were calibrated using a drone image of the colony anchored to geographic coordinates. By utilizing the drone image along with recorded zoom levels, pitch, and yaw for each frame, we calculated the precise location of each pixel on the island. This calibration allowed us to convert pixel dimensions into centimeters, enabling the actual size of each bounding box to be calculated and incorporated as a feature in the classifier.  
 In this section, we describe the code parts that facilitate to map the camera positions into real-world coordinates.
 
-* **Fetch camera positions PTZ parameters**
+### Fetch camera positions PTZ parameters
 We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parameters (zoom, pitch, and yaw) of the camera. It uses Dahua camera external API to fetch details. 
 
 *Script usage*
@@ -30,12 +29,11 @@ Python get_camera_ptz.py -s 15
 The script saves all PTZ details in a text file.
 
 
-* Camera PTZ adjusments
+### Camera PTZ adjusments
 In draw_ptz_on_drone.ipynb Notebook, we calibrate the camera to map positions into the real-world coordinates. We made small adjustments to the values based on deviations observed in the positions mapping on the island area. The notebook visualizes all positions' areas on drone image.
 
-
-* Detecting Overlaps Between Position Areas
-The detect_overlaps.ipynb notebook identifies overlaps between camera positions to prevent multiple counts of the same tern from different camera positions.
+### Detecting Overlaps Between Position Areas
+The detect_overlaps.ipynb notebook identifies overlaps between camera positions to prevent multiple counts of the same tern from different camera positions.  
 The script saves all redundant areas in a JSON file (overlap_areas.json), which is used later when counting terns.
 
 
@@ -53,7 +51,7 @@ Notebook Usage
 
 The trained model weights and logs are saved in the project output path defined in the Notebook.
 
-## Training final classifier model to determine species
+### Training final classifier model to determine species
 We create a range of features that represent the track of the tagged tern. These features include integrated outputs from the YOLOv8 model, movement rate and detection rate, location probability and box dimensions in centimers.
 
 1. Run steps 1 to 3 from 'Running the Algorithm' section on the scans where the tagged images were captured. These steps create tern tracks.
