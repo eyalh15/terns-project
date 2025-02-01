@@ -13,7 +13,7 @@ The cameras were calibrated using a drone image of the colony anchored to geogra
 In this section, we describe the code parts that facilitate to map the camera positions into real-world coordinates.
 
 ### Fetch camera positions PTZ parameters
-We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parameters (zoom, pitch, and yaw) of the camera. It uses Dahua camera external API to fetch details. 
+We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parameters (zoom, pitch, and yaw) of the camera. The script should be executed while the scan is triggered and uses Dahua camera external API to fetch details. 
 
 #### Script usage
 1. Navigate to the RealCoordinatesCalculator directory.
@@ -22,7 +22,6 @@ We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parame
 ```bash
 Python get_camera_ptz.py -s 15
 ```
-*NOTE - The script should be executed while the scan is triggered.*
 
 The script saves all PTZ details in a text file.
 
