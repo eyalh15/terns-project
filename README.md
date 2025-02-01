@@ -15,16 +15,14 @@ In this section, we describe the code parts that facilitate to map the camera po
 ### Fetch camera positions PTZ parameters
 We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parameters (zoom, pitch, and yaw) of the camera. It uses Dahua camera external API to fetch details. 
 
-*Script usage*
+#### Script usage
 1. Navigate to the RealCoordinatesCalculator directory.
 2. Specify camera details in get_camera_ptz.ini.
 3. Run get_camera_ptz.py script with argument of delay between position change. 
 ```bash
 Python get_camera_ptz.py -s 15
 ```
-
-
-* The script should be executed while the scan is triggered.
+*NOTE - The script should be executed while the scan is triggered.*
 
 The script saves all PTZ details in a text file.
 
@@ -43,7 +41,7 @@ The script saves all redundant areas in a JSON file (overlap_areas.json), which 
 We fine-tuned a YOLOv8 model to distinguish between Common Terns and Little Terns using their physical characteristics.
 A Jupyter Notebook (training_YOLOv8.ipynb) is provided to facilitate training using Ultralytics' YOLOv8. The training command is executed within the notebook to fine-tune the model on our dataset.
 
-Notebook Usage
+#### Notebook Usage
 1. Navigate to the YoloDetector directory.
 2. Open the training_YOLOv8.ipynb notebook.
 3. Specify setting for run.
@@ -69,7 +67,7 @@ To run the algorithm, follow these steps to execute each notebook in the correct
 
 This notebook converts video scans captured at the colony into images and detects camera switches to categorize the images by position. It supports a conversion of multiple scans within a video, organizing them into separate directories.
 
-#### Steps
+#### Notebook Usage
 1. Navigate to the ConvertVideoToImage directory.
 2. Specify the following settings in the run_video_converter.ini file:
    - **dates**: Dates you want to process.
@@ -84,8 +82,7 @@ This notebook converts video scans captured at the colony into images and detect
 
 This notebook applies the YOLO V8 object detection model to the categorized images from Notebook 1. The model is trained to detect the terns in each image. The results save for further analysis.
 
-#### Steps
-
+#### Notebook Usage
 1. Navigate to the YoloDetector directory.
 2. Specify the following settings in the yolo_runner.ini file:
    - **dates**: Dates on which you want to detect terns.
@@ -98,7 +95,7 @@ This notebook applies the YOLO V8 object detection model to the categorized imag
 ### 3. track_scan_runner.ipynb Notebook: Tracking Terns in a Single Scan
 This notebook processes a one scan output from YOLO Object Detection to track individual terns across multiple images, creating a sequence of detections for each bird.
 
-#### Steps
+#### Notebook Usage
 1. Navigate to the TrackingTerns directory.
 2. Specify the following settings in the track_scan_runner.ini file:
    - **dates**: Dates on which you want to track terns.
@@ -113,6 +110,7 @@ This notebook processes a one scan output from YOLO Object Detection to track in
 
 This notebook classify and counts terns on colony on multiple one-scan outputs from one day. It makes aggregation of the results across different scans.
 
+#### Notebook Usage
 1. Navigate to the ClassifyTerns directory.
 2. Specify the following settings in the daily_count_terns.ini file:
    - **date**: Date for which you want to classify and count terns.
@@ -123,10 +121,11 @@ This notebook classify and counts terns on colony on multiple one-scan outputs f
 4. Run all cells.
 
 ## Option 2 - Daily Detecting breeding terns
-### 5. classify_terns.ipynb Notebook: Classifying Tracks
 
+### 5. classify_terns.ipynb Notebook: Classifying Tracks
 This notebook classify one-scan tracks detected in Notebook 3. The classifier is taken as input YOlO ouputs, track size in cm and location distribution. It saves the results on JSON files.
 
+#### Notebook Usage
 1. Navigate to the ClassifyTerns directory.
 2. Specify the following settings in the classify_terns.ini file:
    - **date**: A date for which you want to classify terns.
@@ -141,6 +140,7 @@ This notebook classify one-scan tracks detected in Notebook 3. The classifier is
 
 This notebook processes multiple one-scan outputs from part 3 to track terns across multiple scans. The tracks help identify breeding terns, which tend to remain in the same location over time.
 
+#### Notebook Usage
 1. Navigate to the TrackingTerns directory.
 2. Specify the following settings in the track_breeding_terns_runner.ini file:
    - **date**: A date for which you want to track breeding terns.
@@ -152,9 +152,9 @@ This notebook processes multiple one-scan outputs from part 3 to track terns acr
 4. Run all cells.
 
 ### 7: report_breeding_terns.ipynb Notebook: Classifying and counting breeding terns
-
 This notebook classifies and counts breeding terns within the colony, using tracking data from Part 5 as input.
 
+#### Notebook Usage
 1. Navigate to the FinalResults directory.
 2. Specify the following settings in the report_breeding_terns.ini file:
    - **date**: Date for which you want to classify and count breeding terns.
