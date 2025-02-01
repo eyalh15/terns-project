@@ -18,7 +18,7 @@ We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parame
 #### Script usage
 1. Navigate to the RealCoordinatesCalculator directory.
 2. Specify camera details in get_camera_ptz.ini.
-3. Run get_camera_ptz.py script with argument of delay between position change. 
+3. Run get_camera_ptz.py script with argument of delay (in seconds) between position change. 
 ```bash
 Python get_camera_ptz.py -s 15
 ```
