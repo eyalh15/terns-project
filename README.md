@@ -22,12 +22,13 @@ We use Python script (get_camera_ptz.py) to fetch the preset position PTZ parame
 ```bash
 Python get_camera_ptz.py -s 15
 ```
+* The script should be executed while the scan is triggered.
 
 The script saves all PTZ details in a text file.
 
 
 ### Camera PTZ adjusments
-In draw_ptz_on_drone.ipynb Notebook, we calibrate the camera to map positions into the real-world coordinates. We made small adjustments to the values based on deviations observed in the positions mapping on the island area. The notebook visualizes all positions' areas on drone image.
+In draw_ptz_on_drone.ipynb Notebook, we calibrate the camera to map positions into the real-world coordinates. We made small adjustments to the values based on deviations observed in the positions mapping on the island area. The notebook visualizes all positions' areas on drone image. We recommend visualizing all the flags in the drone image and making adjustments if needed (by comparing them to images from the cameras' flags) at the beginning of each season, as we observed small changes in flag locations from year to year.
 
 ### Detecting Overlaps Between Position Areas
 The detect_overlaps.ipynb notebook identifies overlaps between camera positions to prevent multiple counts of the same tern from different camera positions.  
@@ -37,13 +38,14 @@ The script saves all redundant areas in a JSON file (overlap_areas.json), which 
 ## Models training process
 
 ### Training YOLOv8 for Species Detection
-We fine-tuned a YOLOv8 model to distinguish between Common Terns and Little Terns using their physical characteristics.
-A Jupyter Notebook (training_YOLOv8.ipynb) is provided to facilitate training using Ultralytics' YOLOv8. The training command is executed within the notebook to fine-tune the model on our dataset.
+We fine-tuned a YOLOv8 model to distinguish between Common Terns and Little Terns based on their physical characteristics. 
+A Jupyter Notebook (training_YOLOv8.ipynb) is provided to facilitate training using Ultralytics' YOLOv8. The training command is executed within the notebook to fine-tune the model on our dataset. 
+The dataset was organized and splitted using the Roboflow platform. You can find it here: universe.roboflow.com/eyal-halabi-nx8bs/terns-detection-3.0/dataset/3
 
 #### Notebook Usage
 1. Navigate to the YoloDetector directory.
 2. Open the training_YOLOv8.ipynb notebook.
-3. Specify setting for run.
+3. Specify the training settings, including the Terns dataset path (YAML format).
 4. Run all cells to start training the model.
 
 The trained model weights and logs are saved in the project output path defined in the Notebook.
@@ -51,15 +53,16 @@ The trained model weights and logs are saved in the project output path defined 
 ### Training final classifier model to determine species
 We create a range of features that represent the track of the tagged tern. These features include integrated outputs from the YOLOv8 model, movement rate and detection rate, location probability and box dimensions in centimers.
 
-1. Run steps 1 to 3 from 'Running the Algorithm' section on the scans where the tagged images were captured. These steps create tern tracks.
+1. Run steps 1 to 3 from 'Running the Algorithm on specific date' section on the videos of scans where the tagged images were captured. These steps create tern tracks.
+2. Navigate to TrainingModel directory.
 2. Specify setting parameters in train_classifier.ini.
 3. Open train_classifier.ipynb Notebook.
 4. Run all cells.
 
-This process associate tracks to the tagged terns and after that create all features that represents tracks. The notebook train and evaluate performance on multiple classifier models and saves the best-performing model.
+This process associates tracks to the tagged terns and after that creates all features that represents tracks. The notebook trains and evaluates performance on multiple classifier models and saves the best-performing model.
 
 
-## Running the Algorithm
+## Running the algorithm on specific date
 To run the algorithm, follow these steps to execute each notebook in the correct order.
 
 ### 1. run_video_converter.ipynb Notebook: Video-to-Image Conversion and Position Categorization
@@ -101,8 +104,10 @@ This notebook processes a one scan output from YOLO Object Detection to track in
    - **yolo_result_dir**: Path to the input YOLO results directory.
    - **tracker_result_dir**: Path to the output tracking results directory.
 3. Open the track_scan_runner.ipynb notebook.
-4. Run all cells.
+4. Run all cells. 
 
+ 
+**There are two options: 1) Daily Counting terns and 2) Counting only breeders**
 ## Option 1 - Daily Counting terns
 
 ### 4. daily_count_terns.ipynb Notebook: Daily Counting and Classifying Terns
