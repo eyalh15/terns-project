@@ -53,13 +53,14 @@ The trained model weights and logs are saved in the project output path defined 
 ### Training final classifier model to determine species
 We create a range of features that represent the track of the tagged tern. These features include integrated outputs from the YOLOv8 model, movement rate and detection rate, location probability and box dimensions in centimers.
 
-1. Run steps 1 to 3 from 'Running the Algorithm on specific date' section on the videos of scans where the tagged images were captured. These steps create tern tracks.
-2. Navigate to TrainingModel directory.
-3. Specify setting parameters in train_classifier.ini.
-4. Open train_classifier.ipynb Notebook.
-5. Run all cells.
+1. Run steps 1 to 3 from 'Running the Algorithm on specific date' section on scans. These steps create tern tracks.
+2. Tag terns on images from the same scans. 
+3. Navigate to TrainingModel directory.
+4. Specify setting parameters in train_classifier.ini.
+5. Open train_classifier.ipynb Notebook.
+6. Run all cells.
 
-This process associates tracks to the tagged terns and after that creates all features that represents tracks. The notebook trains and evaluates performance on multiple classifier models and saves the best-performing model.
+This process associates tracks with tagged terns, enabling the identification of the true labels for the tracks.Once the tracks are labeled, All features that represents the tracks are created. The notebook then trains and evaluates multiple classifier models and saves the best-performing model.
 
 
 ## Running the algorithm on specific date
