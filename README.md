@@ -55,9 +55,9 @@ We create a range of features that represent the track of the tagged tern. These
 
 1. Run steps 1 to 3 from 'Running the Algorithm on specific date' section on the videos of scans where the tagged images were captured. These steps create tern tracks.
 2. Navigate to TrainingModel directory.
-2. Specify setting parameters in train_classifier.ini.
-3. Open train_classifier.ipynb Notebook.
-4. Run all cells.
+3. Specify setting parameters in train_classifier.ini.
+4. Open train_classifier.ipynb Notebook.
+5. Run all cells.
 
 This process associates tracks to the tagged terns and after that creates all features that represents tracks. The notebook trains and evaluates performance on multiple classifier models and saves the best-performing model.
 
