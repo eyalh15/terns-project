@@ -9,6 +9,11 @@ from datetime import datetime
 
 from video_converter import VideoConverter
 
+# For the process of assigning each image to the correct flag,
+# we check that the last (or second-to-last) flag matches the expected image for that moment in time.
+# We select areas in the image and compare their values.
+# If they indeed match, the video was properly cut to the different flags.
+
 def get_tour_details(video_path, tours_details):
     # Define a regular expression pattern to match the camera ID
     pattern = r'atlit(?:cam)?(\d+)\.stream'

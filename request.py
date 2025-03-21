@@ -6,13 +6,13 @@ import requests
 
 from requests.auth import HTTPDigestAuth
 
-CAM_IP = '2.55.92.58'
+CAM_IP = 'x.x.x.x'
 ## south camera
-CAM_PORT_S = '8080'
+CAM_PORT_S = 'xxxx'
 ## north camera
-CAM_PORT_N = '9090'
-USER_NAME = 'admin'
-PASSWORD = 'rt121271'
+CAM_PORT_N = 'xxxx'
+USER_NAME = 'xxxx'
+PASSWORD = 'xxxx'
 
 
 ## Create different URL for the south and north cameras
