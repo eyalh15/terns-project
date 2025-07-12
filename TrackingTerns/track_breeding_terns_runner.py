@@ -135,30 +135,6 @@ class NestedTernsTracker:
         
         # Return the average coordinates as a dictionary
         return { "x1": average_x1, "x2": average_x2, "y1": average_y1, "y2": average_y2 }
-
-    def _aggregate_classes_freq(self, tracked_object):
-        # Initialize a dictionary to store the sum of confidences and count of predictions for each class
-        class_confidences = {}
-
-        # Iterate over the boxes and aggregate the confidences for each class
-        for box in tracked_object:
-            box_class = box["name"]
-            confidence = box["confidence"]
-            if box_class in class_confidences:
-                class_confidences[box_class]["sum_confidence"] += confidence
-                class_confidences[box_class]["count"] += 1
-            else:
-                class_confidences[box_class] = {"sum_confidence": confidence, "count": 1}
-        
-        # Calculate the average confidence for each class
-        class_average_confidences = {}
-        for class_name, data in class_confidences.items():
-            class_average_confidences[class_name] = {
-                'conf': data["sum_confidence"] / data["count"] if data["count"] > 0 else 0.0,
-                'weight': data["count"]
-            }
-        
-        return class_average_confidences
     
 
     def _count_object_classes(self, tracked_object):
@@ -208,7 +184,7 @@ class NestedTernsTracker:
     # and aggregate this details. For ex. it takes list of average boxes location from 
     # different movies and calculate the average box.
     def _create_track_representation(self, object_sequence_details, flag_tracks_class):
-        class_aggregated_data = { 'classes' : {} }
+        class_aggregated_data = { }
         sum_locations = {}
         total_boxes, total_frames, total_movement_rate = 0, 0, 0
         track_classes = []
@@ -223,7 +199,6 @@ class NestedTernsTracker:
                 track_classes.append(track_class)
             
             box_location_avg = seq_one_scan_details['box_location_avg']
-            classes_freq = seq_one_scan_details['classes_freq']
 
             # Sum the total number of boxes and frames
             total_boxes += seq_one_scan_details['boxes_count']
@@ -232,33 +207,7 @@ class NestedTernsTracker:
 
             # Aggregate box locations
             for key, value in box_location_avg.items():
-                sum_locations[key] = sum_locations.get(key, 0) + value
-
-            # Iterate over each class in the current object data
-            for class_name, class_data in classes_freq.items():
-                # Aggregate the confidence and weight for the class
-                if class_name in class_aggregated_data['classes']:
-                    class_aggregated_data['classes'][class_name]['sum_confidence'] += class_data['conf'] * class_data['weight']
-                    class_aggregated_data['classes'][class_name]['boxes_count'] += class_data['weight']
-                else:
-                    class_aggregated_data['classes'][class_name] = {
-                        'sum_confidence': class_data['conf'] * class_data['weight'],
-                        'boxes_count': class_data['weight']
-                    }
-
-        # Calculate the average confidence for each class
-        for class_name, class_data in class_aggregated_data['classes'].items():
-            sum_confidence = class_data['sum_confidence']
-            class_boxes_count = class_data['boxes_count']
-            
-            class_data['class_percentage'] = class_boxes_count / total_boxes
-            if class_boxes_count > 0:
-                class_data['average_confidence'] = sum_confidence / class_boxes_count
-            else:
-                class_data['average_confidence'] = 0.0
-            
-            del class_data["sum_confidence"]
-            del class_data["boxes_count"]
+                sum_locations[key] = sum_locations.get(key, 0) + value           
 
 
         # Calculate the average location for all boxes
@@ -273,7 +222,9 @@ class NestedTernsTracker:
 
     def _read_classifications(self, classif_dir, scans_names, flag):
         return {
-            scan_name: GeneralUtils._load_json(os.path.join(classif_dir, scan_name, f"{flag}.json"))
+            scan_name: GeneralUtils._load_json(os.path.join(classif_dir, scan_name, f"{flag}.json")) \
+                                                if os.path.isfile(os.path.join(classif_dir, scan_name, f"{flag}.json")) 
+                                                else {} # return empty object if there is no classification file
             for scan_name in scans_names
         }
 
@@ -361,7 +312,6 @@ class NestedTernsTracker:
                         'scan_name': scans_names[index],
                         'id': tracked_object['id'],
                         'box_location_avg': self._calc_box_location_average(tracked_object['predictions']),
-                        'classes_freq': self._aggregate_classes_freq(tracked_object['predictions']),
                         'boxes_count': len(tracked_object['predictions']),
                         'flag_frames_count': tracked_objects_json["frames_number"],
                         'movement_rate': tracked_object['iou'],
@@ -369,8 +319,7 @@ class NestedTernsTracker:
 
         # Read flag jsons of classifications
         flag_tracks_class = self._read_classifications(classif_dir, scans_names, flag)
-        # print('flag: ', flag)
-        # print('tracks number - ', len(object_sequences_details))
+        
         tracks_details = []
         # Aggregate boxes of the same object from different movies 
         for object_sequence_details in object_sequences_details:
@@ -389,12 +338,12 @@ class NestedTernsTracker:
 if __name__=='__main__':
     config = configparser.ConfigParser()
     # Read the config file
-    config.read('track_breeding_terns.ini', encoding="utf8")
+    config.read('track_breeding_terns_runner.ini', encoding="utf8")
     # Access values from the config file
     video_converter_dir = config.get('General', 'video_converter_dir')
     one_scan_result_dir = config.get('General', 'one_scan_result_dir')
     mult_scans_result_dir = config.get('General', 'mult_scans_result_dir')
-    classif_dir = config.get('General', 'classification_dir')
+    classif_dir = config.get('General', 'classification_result_dir')
 
     # Extract tours list names from command-line arguments
     movies_names = sys.argv[1:]
