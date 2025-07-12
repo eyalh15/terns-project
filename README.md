@@ -116,7 +116,7 @@ This notebook processes a one scan output from YOLO Object Detection to track in
 This notebook classify and counts terns on colony on multiple one-scan outputs from one day. It makes aggregation of the results across different scans.
 
 #### Notebook Usage
-1. Navigate to the ClassifyTerns directory.
+1. Navigate to the FinalResults/TernsCountReport directory.
 2. Specify the following settings in the daily_count_terns.ini file:
    - **date**: Date for which you want to classify and count terns.
    - **classifier_model**: Path to the trained classifier model.
