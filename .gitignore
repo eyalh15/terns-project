@@ -5,6 +5,7 @@
 *.txt
 *.xml
 *.json
+!tours.json
 
 *.pyc
 
