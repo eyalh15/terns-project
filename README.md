@@ -55,7 +55,7 @@ We create a range of features that represent the track of the tagged tern. These
 
 1. Run steps 1 to 3 from 'Running the Algorithm on specific date' section on scans. These steps create tern tracks.
 2. Tag terns on images from the same scans. 
-3. Navigate to TrainingModel directory.
+3. Navigate to ClassifyTerns/TrainingModel directory.
 4. Specify setting parameters in train_classifier.ini.
 5. Open train_classifier.ipynb Notebook.
 6. Run all cells.
